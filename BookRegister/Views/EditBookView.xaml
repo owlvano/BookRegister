@@ -1,0 +1,34 @@
+﻿<Window x:Class="BookRegister.Views.EditBookView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        Title="{Binding WindowTitle}"
+        Height="316" Width="259">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+        <StackPanel Margin="10">
+            <Label Content="Name" Target="{Binding ElementName=BookName}"/>
+            <TextBox x:Name="BookName" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+
+            <Label Content="Authors" Target="{Binding ElementName=BookAuthors}"/>
+            <TextBox x:Name="BookAuthors" Text="{Binding Authors, UpdateSourceTrigger=PropertyChanged}" />
+
+            <Label Content="Publication Year" Target="{Binding ElementName=PubYear}"/>
+            <TextBox x:Name="PubYear" Text="{Binding PublicationYear, UpdateSourceTrigger=PropertyChanged}" />
+
+            <Label Content="Submission Date" Target="{Binding ElementName=SubDate}" />
+            <DatePicker SelectedDate="{Binding SubmissionDate, UpdateSourceTrigger=PropertyChanged}" x:Name="SubDate" />
+        </StackPanel>
+        <WrapPanel Grid.Row="1" HorizontalAlignment="Right" Margin="10">
+            <Button x:Name="OkButton" IsDefault="True" MinWidth="60" Margin="0,0,10,0" Click="OkButton_Click">OK</Button>
+            <Button x:Name="CancelButton" IsCancel="True" MinWidth="60">Cancel</Button>
+        </WrapPanel>
+        
+    </Grid>
+</Window>
