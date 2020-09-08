@@ -1,14 +1,11 @@
-﻿using BookRegister.ViewModels;
-using System;
+﻿using System;
 
 namespace BookRegister.Models
 {
-    class Book: ViewModelBase
+    class Book
     {
         public int Id { get; set; }
-
-        private string name;
-        public string Name { get { return name; } set { name = value; OnPropertyChanged(); } }
+        public string Name { get; set; }
         public string Authors { get; set; }
         public int PublicationYear { get; set; }
         public DateTime SubmissionDate { get; set; } = DateTime.Now;
