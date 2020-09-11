@@ -6,7 +6,7 @@ namespace BookRegister.Services
     interface IBookService
     {
         ObservableCollection<Book> GetBooks();
-        void LoadBooks(ObservableCollection<Book> books);
+        void SetBooks(ObservableCollection<Book> books);
         void AddBook(Book newBook);
         void UpdateBook(int bookId, Book newBook);
         void RemoveBook(int bookId);

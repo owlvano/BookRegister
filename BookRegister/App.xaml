@@ -7,5 +7,6 @@
     <Application.Resources>
         <vml:ViewModelLocator x:Key="ViewModelLocator" />
         <vc:DateValueConverter x:Key="DateValueConverter" />
+        <vc:BusyToVisibilityConverter x:Key="BusyToVisibilityConverter" />
     </Application.Resources>
 </Application>

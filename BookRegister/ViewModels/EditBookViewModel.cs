@@ -1,82 +1,60 @@
-﻿using BookRegister.Commands;
-using BookRegister.Models;
+﻿using BookRegister.Models;
 using System;
-using System.Windows.Input;
 
 namespace BookRegister.ViewModels
 {
     class EditBookViewModel: ViewModelBase
     {
-        public EditBookViewModel(string title): this(title, new Book()) {
-            
-        }
+        private Book _book;
 
         public EditBookViewModel(string title, Book book)
         {
-            Book = book;
+            _book = book;
             WindowTitle = title;
         }
 
         #region Properties
         public string WindowTitle { get; set; }
-        public Book Book { get; set; }
 
         public string Authors
         {
-            get { return Book.Authors; }
+            get { return _book.Authors; }
             set
             {
-                Book.Authors = value;
+                _book.Authors = value;
                 OnPropertyChanged();
             }
         }
 
         public string Name { 
-            get { return Book.Name; }
+            get { return _book.Name; }
             set
             {
-               Book.Name = value;
+               _book.Name = value;
                 OnPropertyChanged();
             }
         }
 
         public int PublicationYear
         {
-            get { return Book.PublicationYear; }
+            get { return _book.PublicationYear; }
             set
             {
-                Book.PublicationYear = value;
+                _book.PublicationYear = value;
                 OnPropertyChanged();
             }
         }
 
         public DateTime SubmissionDate
         {
-            get { return Book.SubmissionDate; }
+            get { return _book.SubmissionDate; }
             set 
             { 
-                Book.SubmissionDate = value;
+                _book.SubmissionDate = value;
                 OnPropertyChanged();
             }
         }
 
-        #endregion
-
-        #region Commands
-
-        //private RelayCommand _confirmEditCommand;
-        //public ICommand ConfirmEditCommand
-        //{
-        //    get
-        //    {
-        //        return _confirmEditCommand ??
-        //            (_confirmEditCommand = new RelayCommand(
-        //                _ => { },
-        //                _ => true)
-        //            );
-                
-        //    }
-        //}
         #endregion
     }
 }

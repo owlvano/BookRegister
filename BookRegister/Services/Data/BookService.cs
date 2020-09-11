@@ -6,17 +6,22 @@ namespace BookRegister.Services
 {
     class BookService : IBookService
     {
-        ObservableCollection<Book> _books;
+        private ObservableCollection<Book> _books = new ObservableCollection<Book>();
 
-        public void AddBook(Book book)
+        public void SetBooks(ObservableCollection<Book> books)
         {
-            book.Id = _books.Count > 0 ? _books.Max(b => b.Id) + 1 : 1;
-            _books.Add(book);
+            _books = books;
         }
 
         public ObservableCollection<Book> GetBooks()
         {
             return _books;
+        }
+
+        public void AddBook(Book book)
+        {
+            book.Id = _books.Count > 0 ? _books.Max(b => b.Id) + 1 : 1;
+            _books.Add(book);
         }
 
         public void RemoveBook(int bookId)
@@ -34,11 +39,6 @@ namespace BookRegister.Services
                 _books[index] = newBook;
             }
             
-        }
-        
-        public void LoadBooks(ObservableCollection<Book> books)
-        {
-            _books = books;
         }
 
         public Book SelectBook(int bookId) => _books.Where(b => b.Id == bookId).First();

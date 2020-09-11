@@ -6,6 +6,8 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
 using System.IO;
+using System.Threading.Tasks;
+using System.ComponentModel;
 
 namespace BookRegister.ViewModels
 {
@@ -18,32 +20,54 @@ namespace BookRegister.ViewModels
 
         public MainViewModel(IFileService fileService, IBookService bookService)
         {
+
             _fileService = fileService;
             _bookService = bookService;
 
-            ObservableCollection<Book> books;
-            try
-            {
-                books = new ObservableCollection<Book>(fileService.ReadFile(BOOKS_FILE_NAME));
-                
-            }
-            catch (FileNotFoundException)
-            {
-                books = new ObservableCollection<Book>();
-            }
+            if (DesignerProperties.GetIsInDesignMode(new DependencyObject()))
+                return;
 
-            _bookService.LoadBooks(books);
-
-            Books = _bookService.GetBooks();
+            Task.Run(ReadBooksAsync);
         }
 
         #region Properties
-        public ObservableCollection<Book> Books { get; set; }
+        private bool _isBusy = false;
+        public bool IsBusy {
+            get => _isBusy;
+            set
+            {
+                _isBusy = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _busyMessage;
+        public string BusyMessage
+        {
+            get => _busyMessage;
+            set
+            {
+                _busyMessage = value;
+                OnPropertyChanged();
+            }
+        }
+
+
+        public ObservableCollection<Book> Books
+        {
+            get => _bookService.GetBooks();
+            set
+            {
+                _bookService.SetBooks(value);
+                OnPropertyChanged();
+            }
+        }
+
 
         private Book _selectedBook;
         public Book SelectedBook
         {
-            get { return _selectedBook; }
+            get => _selectedBook;
             set
             {
                 _selectedBook = value;
@@ -57,41 +81,29 @@ namespace BookRegister.ViewModels
         private RelayCommand _addBookCommand;
         public ICommand AddBookCommand
         {
-            get
-            {
-                return _addBookCommand ?? (_addBookCommand = new RelayCommand(AddBook));
-            }
+            get => _addBookCommand ?? (_addBookCommand = new RelayCommand(AddBook));
         }
 
         private RelayCommand _editBookCommand;
         public ICommand EditBookCommand
         {
-            get
-            {
-                return _editBookCommand ?? (_editBookCommand = new RelayCommand(EditBook, IsBookSelected));
-            }
+            get => _editBookCommand ?? (_editBookCommand = new RelayCommand(EditBook, IsBookSelected));
         }
 
         private RelayCommand _removeBookCommand;
         public ICommand RemoveBookCommand
         {
-            get
-            {
-                return _removeBookCommand ?? (_removeBookCommand = new RelayCommand(RemoveBook, IsBookSelected));
-            }
+            get => _removeBookCommand ?? (_removeBookCommand = new RelayCommand(RemoveBook, IsBookSelected));
         }
 
         private RelayCommand _saveBooksCommand;
         public ICommand SaveBooksCommand
         {
-            get
-            {
-                return _saveBooksCommand ?? (_saveBooksCommand = new RelayCommand(SaveBooks, IsBookListNotEmpty));
-            }
+            get => _saveBooksCommand ?? (_saveBooksCommand = new RelayCommand(SaveBooksAsync, IsBookListNotEmpty));
         }
         #endregion
 
-        #region Helper Methods
+        #region Private Methods
         private void AddBook()
         {
             Book tempBook = new Book() { };
@@ -99,6 +111,7 @@ namespace BookRegister.ViewModels
             EditBookView editView = new EditBookView() { DataContext = editViewModel };
             if (editView.ShowDialog() == true)
             {
+                
                 _bookService.AddBook(tempBook);
             }
         }
@@ -123,9 +136,38 @@ namespace BookRegister.ViewModels
             }
         }
 
-        private void SaveBooks()
+        private async void ReadBooksAsync()
         {
-            _fileService.WriteFile(Books, BOOKS_FILE_NAME);
+            IsBusy = true;
+            BusyMessage = $"Reading a file from '{BOOKS_FILE_NAME}'...";
+
+            try
+            {
+                var bookList = await _fileService.ReadFile(BOOKS_FILE_NAME);
+                Books = new ObservableCollection<Book>(bookList);
+            }
+            catch (FileNotFoundException)
+            {
+                MessageBox.Show($"'{BOOKS_FILE_NAME}' file was not found. Starting with an empty list!", "Error");
+                return;
+            }
+            finally
+            {
+                IsBusy = false;
+                BusyMessage = "";
+            }
+        }
+
+        private async void SaveBooksAsync()
+        {
+            IsBusy = true;
+            BusyMessage = $"Writing to a '{BOOKS_FILE_NAME}' file...";
+
+            await _fileService.WriteFile(Books, BOOKS_FILE_NAME);
+
+            IsBusy = false;
+            BusyMessage = "";
+
             MessageBox.Show($"Books successfully saved to file '{BOOKS_FILE_NAME}'!", "Success");
         }
 

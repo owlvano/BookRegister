@@ -1,12 +1,12 @@
 ﻿using BookRegister.Models;
 using System.Collections.Generic;
-
+using System.Threading.Tasks;
 
 namespace BookRegister.Services
 {
     interface IFileService
     {
-        public IEnumerable<Book> ReadFile(string filePath);
-        public void WriteFile(IEnumerable<Book> books, string filePath);
+        public Task<IEnumerable<Book>> ReadFile(string filePath);
+        public Task WriteFile(IEnumerable<Book> books, string filePath);
     }
 }
