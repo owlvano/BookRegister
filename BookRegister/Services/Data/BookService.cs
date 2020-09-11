@@ -1,5 +1,4 @@
 ﻿using BookRegister.Models;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -37,16 +36,9 @@ namespace BookRegister.Services
             
         }
         
-        public void LoadBooks(IEnumerable<Book> books)
+        public void LoadBooks(ObservableCollection<Book> books)
         {
-            if (books == null)
-            {
-                _books = new ObservableCollection<Book>();
-            }
-            else
-            {
-                _books = new ObservableCollection<Book>(books);
-            }
+            _books = books;
         }
 
         public Book SelectBook(int bookId) => _books.Where(b => b.Id == bookId).First();

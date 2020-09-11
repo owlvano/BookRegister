@@ -3,9 +3,9 @@ using BookRegister.Services;
 using BookRegister.Views;
 using BookRegister.Commands;
 using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Input;
-using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 
 namespace BookRegister.ViewModels
 {
@@ -21,7 +21,17 @@ namespace BookRegister.ViewModels
             _fileService = fileService;
             _bookService = bookService;
 
-            IEnumerable<Book> books = fileService.ReadFile(BOOKS_FILE_NAME);
+            ObservableCollection<Book> books;
+            try
+            {
+                books = new ObservableCollection<Book>(fileService.ReadFile(BOOKS_FILE_NAME));
+                
+            }
+            catch (FileNotFoundException)
+            {
+                books = new ObservableCollection<Book>();
+            }
+
             _bookService.LoadBooks(books);
 
             Books = _bookService.GetBooks();
@@ -116,6 +126,7 @@ namespace BookRegister.ViewModels
         private void SaveBooks()
         {
             _fileService.WriteFile(Books, BOOKS_FILE_NAME);
+            MessageBox.Show($"Books successfully saved to file '{BOOKS_FILE_NAME}'!", "Success");
         }
 
         private bool IsBookSelected() => SelectedBook != null;
